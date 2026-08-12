@@ -237,21 +237,6 @@ Die Prioritaet eines Incidents wird aus zwei Faktoren berechnet:
 
 ---
 
-## Bewerbungshinweise
-
-### Was du im Gespraech erklaeren kannst
-
-**Technische Entscheidungen:**
-
-- **Warum Polling statt SSE?**  
-  *"Ich habe SSE evaluiert, aber die Proxy-Konfiguration im Docker-Setup hat mehr Zeit gekostet als geplant. Polling ist fuer MVP stabil und einfach zu debuggen. Fuer Production mit vielen Usern wuerde ich auf SSE oder WebSockets umstellen."*
-
-- **Warum Originaltext behalten?**  
-  *"Sicherheitspersonal hat oft Deutsch als Zweitsprache. Die KI kann Tippfehler und Grammatik korrigieren, aber der Originaltext bleibt fuer Rueckfragen und Beweise erhalten."*
-
-- **Warum duale Prioritaet?**  
-  *"Menschen erkennen akute Gefahren besser als KI. Die Checkbox ist die primaere Entscheidung, die KI dient als Absicherung fuer vergessene Markierungen."*
-
 **Architektur-Kompetenz:**
 
 - Verteilte Systeme (Client → Proxy → App → Workflow → DB)
@@ -263,7 +248,6 @@ Die Prioritaet eines Incidents wird aus zwei Faktoren berechnet:
 
 - RAG-gestuetzte Klassifizierung (Referenzbestand aehnlicher Vorfaelle)
 - WebSocket statt Polling fuer Skalierung
-- Mobile App fuer Sicherheitspersonal
 - Export-Funktion (PDF, CSV) fuer Berichte
 
 ---
