@@ -1,0 +1,709 @@
+{
+  "name": "ticketsystem",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        -480
+      ],
+      "id": "0bf5c2ee-e9c8-47b8-8823-eaaab6765b3b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "e9f82574-2e2f-43bb-8c7c-dad3524f092b",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -272,
+        96
+      ],
+      "id": "b096393c-edbc-49fb-b73f-e9c562af50ea",
+      "name": "Webhook",
+      "webhookId": "e9f82574-2e2f-43bb-8c7c-dad3524f092b"
+    },
+    {
+      "parameters": {
+        "jsCode": "const incoming = $input.first().json;\nconst body = incoming.body ?? incoming;\n\nconst requiredFields = [\n  'objectNumber',\n  'reporterName',\n  'title',\n  'description'\n];\n\nconst missingInformation = requiredFields.filter(field => {\n  const value = body[field];\n  return value === undefined || value === null || String(value).trim() === '';\n});\n\nreturn [\n  {\n    json: {\n      objectNumber: typeof body.objectNumber === 'string' ? body.objectNumber.trim() : '',\n      reporterName: typeof body.reporterName === 'string' ? body.reporterName.trim() : '',\n      title: typeof body.title === 'string' ? body.title.trim() : '',\n      description: typeof body.description === 'string' ? body.description.trim() : '',\n      urgent: body.urgent === true,\n      submittedAt: typeof body.submittedAt === 'string' ? body.submittedAt : '',\n      originalText: typeof body.originalText === 'string' ? body.originalText : '',\n      missingInformation,\n      isValid: missingInformation.length === 0\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        96
+      ],
+      "id": "46d32672-5fa6-412e-8df4-102f3ffd00fc",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "01bee384-ede4-41cc-9971-9b3e3ef950d9",
+              "leftValue": "={{ $json.isValid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -48,
+        96
+      ],
+      "id": "c7634fe3-31cb-437d-8cfb-ff7a1b448759",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "databaseToken",
+        "tableId": 1126274,
+        "additionalOptions": {
+          "search": "={{ $json.objectNumber }}"
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1.1,
+      "position": [
+        112,
+        -16
+      ],
+      "id": "894756ec-cfa2-41f7-a0a0-ec3a226d470e",
+      "name": "Get many rows",
+      "alwaysOutputData": true,
+      "credentials": {
+        "baserowTokenApi": {
+          "id": "8aPJNC6Rzknv7HyY",
+          "name": "Baserow Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fed8b54a-9c79-4d1c-9821-d185886211d7",
+              "leftValue": "={{ Object.keys($json).length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        -16
+      ],
+      "id": "b862078d-a2aa-471a-ae59-0f5f4975f35f",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const incident = $('Code in JavaScript').first().json;\nconst objectData = $input.first().json;\n\nreturn [\n  {\n    json: {\n      incidentId: `INC-${Date.now()}`,\n      status: 'eingegangen',\n      validationState: 'object_verified',\n\n      objectNumber: incident.objectNumber,\n      objectName: objectData.objectName || '',\n      city: objectData.city || '',\n      responsibleTechnician: objectData.responsibleTechnician || '',\n      technicianEmail: objectData.technicianEmail || '',\n      trade: objectData.trade || '',\n      priorityZone: objectData.priorityZone || '',\n\n      reporterName: incident.reporterName,\n      title: incident.title,\n      description: incident.description,\n      originalText: incident.originalText,\n      urgent: incident.urgent,\n      submittedAt: incident.submittedAt,\n      missingInformation: incident.missingInformation || []\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        -96
+      ],
+      "id": "41849b72-6cb2-4cba-a597-9021b9cdea4a",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "authentication": "databaseToken",
+        "operation": "create",
+        "tableId": 1126323,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 10057213,
+              "fieldValue": "={{ $json.incidentId }}"
+            },
+            {
+              "fieldId": 10057214,
+              "fieldValue": "={{ $json.objectNumber }}"
+            },
+            {
+              "fieldId": 10057215,
+              "fieldValue": "={{ $json.objectName }}"
+            },
+            {
+              "fieldId": 10057240,
+              "fieldValue": "={{ $json.reporterName }}"
+            },
+            {
+              "fieldId": 10057242,
+              "fieldValue": "={{ $json.title }}"
+            },
+            {
+              "fieldId": 10057243,
+              "fieldValue": "={{ $json.description }}"
+            },
+            {
+              "fieldId": 10057244,
+              "fieldValue": "={{ $json.originalText }}"
+            },
+            {
+              "fieldId": 10057248,
+              "fieldValue": "={{ $json.urgent }}"
+            },
+            {
+              "fieldId": 10057252,
+              "fieldValue": "={{ $json.submittedAt }}"
+            },
+            {
+              "fieldId": 10057344,
+              "fieldValue": "={{ $json.city }}"
+            },
+            {
+              "fieldId": 10057271,
+              "fieldValue": "={{ $json.confidence }}"
+            },
+            {
+              "fieldId": 10057269,
+              "fieldValue": "={{ $json.finalUrgency }}"
+            },
+            {
+              "fieldId": 10057259,
+              "fieldValue": "={{ $json.aiUrgency }}"
+            },
+            {
+              "fieldId": 10057258,
+              "fieldValue": "={{ $json.incidentType }}"
+            },
+            {
+              "fieldId": 10057253,
+              "fieldValue": "={{ $json.status }}"
+            },
+            {
+              "fieldId": 10057256,
+              "fieldValue": "={{ $json.validationState }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1.1,
+      "position": [
+        928,
+        -96
+      ],
+      "id": "5fffd989-29b5-4250-bf8b-3f9de8a50f68",
+      "name": "Create a row",
+      "credentials": {
+        "baserowTokenApi": {
+          "id": "8aPJNC6Rzknv7HyY",
+          "name": "Baserow Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"status\": \"error\",\n  \"errorType\": \"invalid_input\",\n  \"message\": \"Pflichtfelder fehlen.\",\n  \"missingInformation\": \"={{$json.missingInformation}}\",\n  \"validationState\": \"input_invalid\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        96,
+        224
+      ],
+      "id": "edb86450-737a-407a-a114-b4a4a2f812f8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"status\": \"error\",\n  \"errorType\": \"unknown_object\",\n  \"message\": \"Diese Objektnummer existiert nicht.\",\n  \"validationState\": \"object_not_found\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        80
+      ],
+      "id": "e4c7ffee-c676-4142-a631-5c16c17cd8c5",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        400,
+        224
+      ],
+      "id": "547c35a0-57e7-4bcb-8c29-c223c353e312",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        80
+      ],
+      "id": "ac685a5a-d9d0-4991-9c82-63c2ce6be0c3",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"status\": \"success\",\n  \"message\": \"Meldung wurde erfolgreich übermittelt.\",\n  \"incidentId\": \"={{ $json.incidentId || '' }}\",\n  \"objectNumber\": \"={{ $json.objectNumber || '' }}\",\n  \"validationState\": \"={{ $json.validationState || 'object_verified' }}\"\n} \n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1216,
+        -96
+      ],
+      "id": "83ef55e4-18b1-4372-8a83-401270826add",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1488,
+        -96
+      ],
+      "id": "6dbce2f9-6dbb-48cb-8631-05c597a8d8a3",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "claude-sonnet-4-6",
+          "mode": "list",
+          "cachedResultName": "claude-sonnet-4-6"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Du arbeitest als strukturierter Fachanalyst für Störungsmeldungen und Sicherheitsvorfälle in einem professionellen Melde- und Dokumentationssystem.\n\nDeine Aufgabe ist es, eingehende Vorfallsmeldungen so auszuwerten, wie es ein sorgfältiger Mitarbeiter in einer Leitstelle oder Sicherheitsdokumentation tun würde:\n- nüchtern\n- faktenbasiert\n- ohne Spekulation\n- ohne Informationen zu erfinden\n- mit Fokus auf verwertbare, strukturierte Dokumentation\n\nDu bewertest nicht kreativ, sondern extrahierst und normalisierst Informationen für die weitere technische Verarbeitung in einem n8n-Workflow und einer Incident-Datenbank.\n\nAufgabe:\n- Bereinige und verbessere die Beschreibung sprachlich zu einer sachlichen, klaren Vorfallsbeschreibung.\n- Werte den Vorfall inhaltlich aus.\n- Bestimme validationState, incidentType, aiUrgency und confidence.\n- Extrahiere incidentDate und incidentTime nur dann, wenn diese im Text ausdrücklich oder eindeutig genannt sind.\n- Wenn Angaben fehlen oder unklar sind, gib null zurück statt etwas zu erfinden.\n\nWichtige Regeln:\n- originalText darf niemals verändert oder neu formuliert zurückgegeben werden.\n- Erfinde keine Fakten.\n- submittedAt ist NICHT incidentDate oder incidentTime.\n- finalUrgency wird NICHT von dir berechnet.\n- Gib keine Erklärung, keinen Fließtext und keinen Markdown-Codeblock aus.\n- Antworte ausschließlich mit einem einzigen JSON-Objekt.\n- Wenn der Meldungstext unklar, unvollständig oder nicht belastbar ist, drücke das über validationState und confidence aus, nicht durch Spekulation.\n\nErlaubte Werte:\n- validationState: \"valid\", \"incomplete\", \"unclear\", \"invalid\"\n- aiUrgency: \"low\", \"medium\", \"high\", \"critical\"\n- incidentType: kurze fachliche Kategorie als String oder null\n- confidence: Zahl zwischen 0 und 1\n\nBedeutung der Felder:\n- description: bereinigte, sachliche Fassung des Vorfalls auf Basis der vorhandenen Angaben\n- validationState:\n  - \"valid\" = Vorfall ist verständlich genug für Weiterverarbeitung\n  - \"incomplete\" = wichtige Angaben fehlen\n  - \"unclear\" = Text ist vorhanden, aber nicht eindeutig interpretierbar\n  - \"invalid\" = Inhalt ist leer, unbrauchbar oder kein echter Vorfall\n- aiUrgency: inhaltliche Dringlichkeit des Vorfalls, unabhängig von einer manuellen urgent-Checkbox\n- confidence: Sicherheitswert der Gesamtauswertung; niedrig bei sehr kurzen, lückenhaften oder mehrdeutigen Angaben\n- incidentDate: nur das tatsächliche Ereignisdatum, nicht das Erfassungsdatum\n- incidentTime: nur die tatsächliche Ereigniszeit, nicht die Erfassungszeit\n\nErwartetes Ausgabeformat:\n{\n  \"validationState\": \"valid\",\n  \"incidentType\": \"string oder null\",\n  \"aiUrgency\": \"low\",\n  \"confidence\": 0.0,\n  \"description\": \"string\",\n  \"incidentDate\": null,\n  \"incidentTime\": null\n}\n\nEingabedaten:\nincidentId: {{ $json.incidentId }}\nobjectNumber: {{ $json.objectNumber }}\nobjectName: {{ $json.objectName }}\ncity: {{ $json.city }}\nreporterName: {{ $json.reporterName }}\ntitle: {{ $json.title }}\ndescription: {{ $json.description }}\noriginalText: {{ $json.originalText }}\nurgent: {{ $json.urgent }}\nsubmittedAt: {{ $json.submittedAt }}\n\n\nGib ausschließlich rohes JSON zurück.\nVerwende keine Markdown-Formatierung.\nVerwende keine ```json-Codeblöcke.\nVerwende keine Einleitung und keine Erklärung."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.anthropic",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -96
+      ],
+      "id": "86d825bb-fc1f-4673-8171-703f44fd7165",
+      "name": "Message a model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "fU64FTslpue2tqAx",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const sourceData = $('Code in JavaScript1').first().json;\nconst llmData = $('Message a model').first().json;\n\nconst rawText = llmData.content?.[0]?.text;\n\nif (!rawText) {\n  throw new Error('LLM output missing: Message a model -> content[0].text not found');\n}\n\nlet parsed;\n\ntry {\n  parsed = JSON.parse(rawText);\n} catch (error) {\n  throw new Error('LLM output is not valid JSON: ' + error.message);\n}\n\nconst aiUrgency = parsed.aiUrgency ?? null;\nconst urgent = sourceData.urgent === true;\n\nlet finalUrgency = aiUrgency;\n\nif (aiUrgency === 'critical') {\n  finalUrgency = 'critical';\n} else if (urgent) {\n  finalUrgency = 'high';\n} else if (!['low', 'medium', 'high', 'critical'].includes(aiUrgency)) {\n  finalUrgency = 'medium';\n}\n\nreturn [\n  {\n    json: {\n      ...sourceData,\n      validationState: parsed.validationState ?? null,\n      incidentType: parsed.incidentType ?? null,\n      aiUrgency: aiUrgency,\n      finalUrgency: finalUrgency,\n      confidence: parsed.confidence ?? null,\n      description: parsed.description ?? sourceData.description ?? null,\n      incidentDate: parsed.incidentDate ?? null,\n      incidentTime: parsed.incidentTime ?? null\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        -96
+      ],
+      "id": "ce2dbd5f-51a7-4161-aa24-ef09ae4f8f6e",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ticketsystem.mamonaprojects.de/api/incidents/changed",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "xy"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event\": \"incident-created\",\n  \"source\": \"n8n\",\n  \"timestamp\": \"={{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1088,
+        -96
+      ],
+      "id": "d149a2cb-a72c-4cd0-a12c-6725096e1622",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "1E9Nxjaj5CUQNT4a",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "databaseToken",
+        "operation": "create",
+        "tableId": 1128650,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 10080969,
+              "fieldValue": "error"
+            },
+            {
+              "fieldId": 10080967,
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        224
+      ],
+      "id": "6d4ec150-731e-4707-8f61-b3efad5e8ae6",
+      "name": "Create a row1",
+      "credentials": {
+        "baserowTokenApi": {
+          "id": "8aPJNC6Rzknv7HyY",
+          "name": "Baserow Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "databaseToken",
+        "operation": "create",
+        "tableId": 1128650,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 10080969,
+              "fieldValue": "error"
+            },
+            {
+              "fieldId": 10080967,
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        80
+      ],
+      "id": "261ef571-0d8b-4864-b862-b57f30e83976",
+      "name": "Create a row2",
+      "credentials": {
+        "baserowTokenApi": {
+          "id": "8aPJNC6Rzknv7HyY",
+          "name": "Baserow Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "databaseToken",
+        "operation": "create",
+        "tableId": 1128650,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 10080967,
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldId": 10080969,
+              "fieldValue": "success"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1.1,
+      "position": [
+        1344,
+        -96
+      ],
+      "id": "156323a5-8b23-4752-be46-4d740e5765ec",
+      "name": "Create a row3",
+      "credentials": {
+        "baserowTokenApi": {
+          "id": "8aPJNC6Rzknv7HyY",
+          "name": "Baserow Token account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Create a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Create a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Create a row3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row3": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "4d9f737d-c8eb-4a35-9a05-c7c6c5fe9d32",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6e5d8449f804171ac2243ace0af6aff7ea2941cfc9a58a372c82be339ba5941c"
+  },
+  "nodeGroups": [],
+  "id": "O8COXBcyOq3kBBw0",
+  "tags": []
+}

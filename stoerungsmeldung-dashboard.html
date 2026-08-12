@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incident-Dashboard</title>
+  <style>
+    :root{--bg:#f4f4f2;--surface:#fff;--soft:#fafaf8;--text:#111;--muted:#6e6e6e;--line:#deded9;--danger:#b42318;--danger-soft:#fcebea;--warning:#9a6700;--warning-soft:#fff4d6;--success:#18794e;--success-soft:#e8f5ee;--radius:14px}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.page{width:min(100% - 32px,1180px);margin:auto;padding:32px 0 56px}.brand{display:flex;align-items:center;gap:10px;margin-bottom:42px;font-size:14px;font-weight:700;letter-spacing:.02em}.brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#111;color:#fff;font-size:17px}.eyebrow{margin:0 0 8px;color:var(--muted);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}h1{margin:0;font-size:clamp(30px,5vw,46px);line-height:1.05;letter-spacing:-.045em}.intro{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:28px}.intro p:last-child{max-width:560px;margin:14px 0 0;color:var(--muted);line-height:1.55}.button{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 18px;border-radius:10px;background:#111;color:#fff;font:inherit;font-weight:700;text-decoration:none;white-space:nowrap}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.stat,.toolbar,.incident{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:0 12px 35px rgba(0,0,0,.045)}.stat{padding:18px 20px}.stat-label{color:var(--muted);font-size:13px;font-weight:700}.stat-value{margin-top:8px;font-size:30px;font-weight:800;letter-spacing:-.04em}.danger{color:var(--danger)}.warning{color:var(--warning)}.success{color:var(--success)}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px;margin-bottom:18px}.search{flex:1 1 260px;min-height:44px;padding:0 13px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;outline:none}select{min-height:44px;padding:0 34px 0 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit}.search:focus,select:focus{border-color:#111;box-shadow:0 0 0 3px rgba(17,17,17,.1)}.result-count{margin-left:auto;color:var(--muted);font-size:13px}.incident-list{display:grid;gap:12px}.incident{overflow:hidden}.incident.new-incident{animation:incidentSlideIn .55s ease-out both,newIncidentHighlight 2.4s ease-out .55s}.incident summary{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(120px,.8fr) minmax(170px,1fr) minmax(120px,.8fr) auto;align-items:center;gap:18px;padding:19px 22px;cursor:pointer;list-style:none}.incident summary::-webkit-details-marker{display:none}.incident summary::after{content:"+";display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--line);border-radius:50%;color:var(--muted);font-size:20px}.incident[open] summary::after{content:"−"}.incident summary:hover{background:var(--soft)}.title{font-weight:800}.meta,.date{color:var(--muted);font-size:13px}.meta{margin-top:5px}.object{font-size:14px;font-weight:700}.badge{display:inline-flex;width:fit-content;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.badge.urgent{background:var(--danger-soft);color:var(--danger)}.badge.review{background:var(--warning-soft);color:var(--warning)}.badge.normal{background:var(--success-soft);color:var(--success)}.incident-body{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:0 22px 22px;border-top:1px solid var(--line)}.detail{padding-top:18px}.detail.full{grid-column:1/-1}.detail-label{margin-bottom:6px;color:var(--muted);font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.detail-value{white-space:pre-wrap;line-height:1.55}.original{padding:14px;border-radius:10px;background:var(--soft);font-size:14px;white-space:pre-wrap}.empty{padding:34px;border:1px dashed var(--line);border-radius:var(--radius);color:var(--muted);text-align:center}.error{padding:16px;border-radius:10px;background:var(--danger-soft);color:var(--danger);line-height:1.5}
+    @keyframes incidentSlideIn{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes newIncidentHighlight{from{box-shadow:0 0 0 3px rgba(22,91,145,.28)}to{box-shadow:0 12px 35px rgba(0,0,0,.045)}}
+    @media(max-width:760px){.page{width:min(100% - 22px,720px);padding-top:22px}.intro{align-items:stretch;flex-direction:column}.stats{grid-template-columns:repeat(2,1fr)}.incident summary{grid-template-columns:1fr auto;gap:10px}.incident summary>:nth-child(2),.incident summary>:nth-child(3),.incident summary>:nth-child(4){grid-column:1}.incident summary>:nth-child(3){grid-row:3}.incident summary>:nth-child(4){grid-row:4}.incident summary>:last-child{grid-column:2;grid-row:1/span 4}.incident-body{grid-template-columns:1fr;gap:0}.detail.full{grid-column:auto}}
+    @media(max-width:420px){.stats{gap:9px}.stat{padding:14px}.stat-value{font-size:25px}}
+    @media(prefers-reduced-motion:reduce){.incident.new-incident{animation:none}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="brand"><div class="brand-mark">!</div><span>STÖRUNGSMELDUNG</span></div>
+    <section class="intro"><div><p class="eyebrow">Übersicht</p><h1>Incident Reports</h1><p>Alle Meldungen auf einen Blick. Öffne einen Eintrag, um die strukturierten Angaben und den unveränderten Originaltext zu prüfen.</p></div><a class="button" href="/formular">Neue Meldung</a></section>
+    <section class="stats" aria-label="Kennzahlen"><div class="stat"><div class="stat-label">Meldungen gesamt</div><div class="stat-value" id="totalCount">–</div></div><div class="stat"><div class="stat-label">Dringend</div><div class="stat-value danger" id="urgentCount">–</div></div><div class="stat"><div class="stat-label">Prüfung empfohlen</div><div class="stat-value warning" id="reviewCount">–</div></div><div class="stat"><div class="stat-label">Heute eingegangen</div><div class="stat-value success" id="todayCount">–</div></div></section>
+    <section class="toolbar" aria-label="Meldungen filtern"><input class="search" id="searchInput" type="search" placeholder="Suche nach Titel, Objekt, Stadt oder Melder …"><select id="priorityFilter" aria-label="Priorität filtern"><option value="all">Alle Prioritäten</option><option value="urgent">Dringend</option><option value="review">Prüfung empfohlen</option><option value="normal">Normal</option></select><select id="typeFilter" aria-label="Störungstyp filtern"><option value="all">Alle Störungstypen</option></select><span class="result-count" id="resultCount"></span></section>
+    <section class="incident-list" id="incidentList" aria-live="polite"><div class="empty">Meldungen werden geladen …</div></section>
+  </main>
+  <script>
+    const INCIDENTS_URL = "/api/incidents";
+    let incidents = [];
+    let hasLoadedIncidents = false;
+    const $ = selector => document.querySelector(selector);
+    const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#039;","\"":"&quot;"}[char]));
+    const formatDate = value => { if (!value) return "–"; const date = new Date(`${value}T12:00:00`); return Number.isNaN(date.getTime()) ? escapeHtml(value) : new Intl.DateTimeFormat("de-DE", {dateStyle:"medium"}).format(date); };
+    const formatDateTime = value => { if (!value) return "–"; const date = new Date(value); return Number.isNaN(date.getTime()) ? escapeHtml(value) : date.toLocaleString("de-DE"); };
+    const priorityLabel = priority => ({urgent:"Dringend",review:"Prüfung empfohlen",normal:"Normal"}[priority] || "Unklar");
+
+    function getPriority(item) {
+      if (item.priority) return item.priority;
+      const urgency = String(item.aiUrgency || "").trim().toLowerCase();
+      if (item.urgent === true || urgency === "hoch") return "urgent";
+      if (urgency === "mittel") return "review";
+      return "normal";
+    }
+
+    function getTimestamp(item) {
+      const submitted = item.submittedAt ? new Date(item.submittedAt).getTime() : NaN;
+      if (!Number.isNaN(submitted)) return submitted;
+      const incident = item.incidentDate ? new Date(`${item.incidentDate}T${item.incidentTime || "00:00"}:00`).getTime() : NaN;
+      return Number.isNaN(incident) ? 0 : incident;
+    }
+
+    function renderTypes() {
+      const types = [...new Set(incidents.map(item => item.incidentType).filter(Boolean))].sort();
+      $("#typeFilter").innerHTML = '<option value="all">Alle Störungstypen</option>' + types.map(type => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join("");
+    }
+
+    function renderStats() {
+      const today = new Date().toISOString().slice(0,10);
+      $("#totalCount").textContent = incidents.length;
+      $("#urgentCount").textContent = incidents.filter(item => getPriority(item) === "urgent").length;
+      $("#reviewCount").textContent = incidents.filter(item => getPriority(item) === "review").length;
+      $("#todayCount").textContent = incidents.filter(item => String(item.submittedAt || "").slice(0,10) === today).length;
+    }
+
+    function render(newIncidentIds = new Set()) {
+      const query = $("#searchInput").value.trim().toLowerCase();
+      const priority = $("#priorityFilter").value;
+      const type = $("#typeFilter").value;
+      const filtered = incidents.filter(item => {
+        const text = [item.id,item.objectNumber,item.objectName,item.city,item.reporterName,item.title,item.description,item.incidentType].filter(Boolean).join(" ").toLowerCase();
+        return (!query || text.includes(query)) && (priority === "all" || getPriority(item) === priority) && (type === "all" || item.incidentType === type);
+      });
+      $("#resultCount").textContent = `${filtered.length} von ${incidents.length} Meldungen`;
+      if (!filtered.length) { $("#incidentList").innerHTML = '<div class="empty">Keine Meldungen für diesen Filter gefunden.</div>'; return; }
+      $("#incidentList").innerHTML = filtered.map(item => {
+        const level = getPriority(item);
+        const animationClass = newIncidentIds.has(item.id) ? " new-incident" : "";
+        return `<details class="incident${animationClass}"><summary><div><div class="title">${escapeHtml(item.title || "Ohne Überschrift")}</div><div class="meta">${escapeHtml(item.id || "Ohne ID")} · ${escapeHtml(item.reporterName || "Unbekannter Melder")}</div></div><div class="object">${escapeHtml(item.objectNumber || "Keine Objektnummer")}</div><div class="object">${escapeHtml(item.objectName || "Kein Objektname")}<div class="date">${escapeHtml(item.city || "Keine Stadt")}</div></div><div><span class="badge ${level}">${priorityLabel(level)}</span><div class="date">${formatDate(item.incidentDate)}${item.incidentTime ? `, ${escapeHtml(item.incidentTime)} Uhr` : ""}</div></div><span aria-hidden="true"></span></summary><div class="incident-body"><div class="detail"><div class="detail-label">Objektnummer</div><div class="detail-value">${escapeHtml(item.objectNumber || "Nicht vorhanden")}</div></div><div class="detail"><div class="detail-label">Objektname</div><div class="detail-value">${escapeHtml(item.objectName || "Nicht vorhanden")}</div></div><div class="detail"><div class="detail-label">Stadt</div><div class="detail-value">${escapeHtml(item.city || "Nicht vorhanden")}</div></div><div class="detail"><div class="detail-label">Melder</div><div class="detail-value">${escapeHtml(item.reporterName || "Nicht vorhanden")}</div></div><div class="detail"><div class="detail-label">Störungstyp</div><div class="detail-value">${escapeHtml(item.incidentType || "Nicht erkannt")}</div></div><div class="detail"><div class="detail-label">KI-Einschätzung</div><div class="detail-value">${escapeHtml(item.aiUrgency || "Nicht vorhanden")}</div></div><div class="detail"><div class="detail-label">Manuelle Checkbox</div><div class="detail-value">${item.urgent ? "Als dringend markiert" : "Nicht als dringend markiert"}</div></div><div class="detail"><div class="detail-label">Eingegangen</div><div class="detail-value">${formatDateTime(item.submittedAt)}</div></div><div class="detail full"><div class="detail-label">Bereinigte Beschreibung</div><div class="detail-value">${escapeHtml(item.description || "Keine Beschreibung")}</div></div><div class="detail full"><div class="detail-label">Originaltext (unverändert)</div><div class="original">${escapeHtml(item.originalText || "Nicht vorhanden")}</div></div></div></details>`;
+      }).join("");
+    }
+
+    async function loadIncidents() {
+      try {
+        const response = await fetch(INCIDENTS_URL, {headers:{Accept:"application/json"}, cache:"no-store"});
+        if (!response.ok) throw new Error(`Die Meldungen konnten nicht geladen werden (${response.status}).`);
+        const result = await response.json();
+        const nextIncidents = Array.isArray(result) ? result : (result.incidents || result.data || []);
+        const previousIds = new Set(incidents.map(item => item.id));
+        const newIncidentIds = hasLoadedIncidents
+          ? new Set(nextIncidents.filter(item => !previousIds.has(item.id)).map(item => item.id))
+          : new Set();
+
+        incidents = nextIncidents;
+        incidents.sort((a,b) => getTimestamp(b) - getTimestamp(a));
+        renderTypes(); renderStats(); render(newIncidentIds);
+        hasLoadedIncidents = true;
+      } catch (error) {
+        $("#incidentList").innerHTML = `<div class="error">${escapeHtml(error.message || "Ladefehler")}<br><br>Bitte prüfe, ob <code>node server.js</code> läuft und die Baserow-Werte in der <code>.env</code> korrekt sind.</div>`;
+      }
+    }
+
+    $("#searchInput").addEventListener("input", render);
+    $("#priorityFilter").addEventListener("change", render);
+    $("#typeFilter").addEventListener("change", render);
+
+    loadIncidents();
+
+    const incidentEvents = new EventSource("/api/incidents/events");
+
+    incidentEvents.addEventListener("incidents-changed", () => {
+      loadIncidents();
+    });
+
+    incidentEvents.addEventListener("error", () => {
+      console.warn("Live-Verbindung zum Server wurde unterbrochen.");
+    });
+  </script>
+</body>
+</html>
