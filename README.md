@@ -124,7 +124,6 @@ flowchart LR
 - ✅ Duale Prioritaet: manuelle Checkbox + KI-Einschaetzung
 - ✅ Live-Aktualisierung des Dashboards (Polling)
 - ✅ Filter nach Prioritaet, Stoerungstyp, Suchbegriff
-- ✅ Objektsuche mit Autovervollstaendigung
 - ✅ Originaltext + bereinigte Beschreibung parallel anzeigen
 
 ### Sicherheit
@@ -182,7 +181,7 @@ PORT=3000
 ```caddy
 ticketsystem.mamonaprojects.de {
     basicauth / {
-        flavio $abc123...
+        usee $abc123...
     }
     reverse_proxy incident-app:3000
 }
