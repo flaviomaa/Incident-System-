@@ -243,33 +243,10 @@ Die Prioritaet eines Incidents wird aus zwei Faktoren berechnet:
 - Sicherheitsaspekte (Auth, HTTPS, Token)
 - Trade-off-Analyse (Polling vs. SSE, MVP vs. Production)
 
-### Naechste Ausbaustufen
-
-- RAG-gestuetzte Klassifizierung (Referenzbestand aehnlicher Vorfaelle)
-- WebSocket statt Polling fuer Skalierung
-- Export-Funktion (PDF, CSV) fuer Berichte
-
----
 
 ## Projektstatus
 
 ### ✅ Abgeschlossen
-
-- Formular mit Validierung und Duplikatsschutz
-- n8n-Workflow mit LLM-Bereinigung
-- Baserow-Integration (Objekte + Incidents)
-- Dashboard mit Filter und Live-Update
-- HTTPS + Basic Auth
-- Callback-Mechanismus
-
-### 🔄 Geplant
-
-- RAG als Klassifizierungshilfe
-- WebSocket fuer Skalierung
-- Erweiterte Fehlerbehandlung
-- Monitoring & Logging
-
----
 
 ## Screenshots
 
@@ -285,23 +262,6 @@ Die Prioritaet eines Incidents wird aus zwei Faktoren berechnet:
 
 ![Workflow](./Workflow.png)
 
----
-
-## Lizenz
-
-Dieses Projekt dient als Portfolio-Nachweis fuer Bewerbungen im Bereich AI Automation / Prozessautomatisierung.
-
----
-
-## Kontakt
-
-**Entwickler:** Flavio  
-**Standort:** Maintal, Hessen, DE  
-**Hintergrund:** Quereinsteiger aus der Sicherheitsbranche, selbstaendig erlernte Skills in Python, JavaScript, n8n, Docker
-
----
-
-## Quellen
 
 - [n8n Webhook Node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook)
 - [n8n HTTP Request Node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest)
